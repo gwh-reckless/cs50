@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .post {
+        display: flex;
+        justify-content: space-between;
+      }
+      @keyframes hide {
+        0% {
+          opacity: 1;
+          height: 100%;
+          line-height: 100%;
+          padding: 20px;
+          margin-bottom: 10px;
+        }
+        75% {
+          opacity: 0;
+          height: 100%;
+          line-height: 100%;
+          padding: 20px;
+          margin-bottom: 10px;
+        }
+        100% {
+          opacity: 0;
+          height: 0px;
+          line-height: 0px;
+          padding: 0px;
+          margin-bottom: 0px;
+        }
+      }
+      .post {
+        background-color: greenyellow;
+        margin: 10px;
+        font-size: 40px;
+        padding: 20px;
+        animation-name: hide;
+        animation-duration: 1s;
+        animation-fill-mode: forwards;
+        animation-play-state: paused;
+      }
+    </style>
+    <script>
+      let counter = 1;
+      const quantity = 20;
+
+      // When DOM loads, render the first 20 posts
+      document.addEventListener('DOMContentLoaded', load);
+      document.addEventListener('click', (event) => {
+        const element = event.target;
+        if (element.className === 'hide') {
+          element.parentElement.style.animationPlayState = 'running';
+          element.parentElement.addEventListener('animationend', () => {
+            element.parentElement.remove();
+            const posts = document.querySelector('#posts');
+            if (posts.children.length === 0) {
+              load();
+            }
+          });
+        }
+      });
+      window.onscroll = () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+          load();
+        }
+      };
+
+      function load() {
+        const start = counter;
+        const end = start + quantity - 1;
+        counter = end + 1;
+        fetch(`/posts/posts?start=${start}&end=${end}`)
+          .then((response) => response.json())
+          .then((data) => {
+            data.posts.forEach(add_post);
+          });
+      }
+      function add_post(contents) {
+        const post = document.createElement('div');
+        post.className = 'post';
+        post.innerHTML = `${contents} <button class="hide">Hide</button>`;
+
+        document.querySelector('#posts').append(post);
+      }
+    </script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="posts"></div>
+  </body>
+</html>

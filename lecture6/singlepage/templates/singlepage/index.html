@@ -1,0 +1,28 @@
+{% extends 'singlepage/layout.html'%} {% block body %}
+<h1>Welcome</h1>
+<button data-section="1">section 1</button>
+<button data-section="2">section 2</button>
+<button data-section="3">section 3</button>
+
+<div id="content"></div>
+<script>
+  window.onpopstate = (event) => {
+    console.log(event.state.section);
+    showSection(event.state.section);
+  };
+  function showSection(section_id) {
+    fetch(`/singlepage/section/${section_id}`)
+      .then((response) => response.text())
+      .then((section) => {
+        document.querySelector('#content').innerText = section;
+      });
+  }
+  document.querySelectorAll('button').forEach((btn) => {
+    btn.onclick = (event) => {
+      section_id = event.target.dataset.section;
+      showSection(section_id);
+      history.pushState({ section: section_id }, '', `section${section_id}`);
+    };
+  });
+</script>
+{% endblock %}

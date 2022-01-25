@@ -1,0 +1,21 @@
+{% extends 'react/layout.html' %} {% block body%}
+<div id="app"></div>
+<script type="text/babel">
+  function App() {
+    const [count, setCount] = React.useState(0);
+    return (
+      <div>
+        <div>{count}</div>
+        <button
+          onClick={() => {
+            setCount(count + 1);
+          }}
+        >
+          Count
+        </button>
+      </div>
+    );
+  }
+  ReactDOM.render(<App />, document.querySelector('#app'));
+</script>
+{% endblock %}
